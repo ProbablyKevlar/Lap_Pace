@@ -13,25 +13,34 @@ def main():
     # Custom CSS for a more "premium" feel and mobile optimization
     st.markdown("""
         <style>
-        .stButton button {
-            background-color: #FF4B4B;
-            color: white;
-            border-radius: 8px;
-            font-weight: bold;
-            padding: 0.6rem 1rem;
-        }
-        .stButton button:hover {
-            background-color: #FF6B6B;
-            color: white;
-            border: none;
-        }
+        /* Force a clean light theme with dark text */
         .main {
             background-color: #f8f9fa;
         }
-        h1 {
-            color: #1E1E1E;
+        /* Ensure all text/labels are dark for visibility on light background */
+        .stApp, .stMarkdown, p, label, .stSelectbox label, .stNumberInput label, .stCheckbox label, .stMetric label {
+            color: #1E1E1E !important;
+        }
+        /* Specific fix for headers and metrics */
+        h1, h2, h3, [data-testid="stMetricValue"] > div {
+            color: #1E1E1E !important;
             font-family: 'Inter', sans-serif;
-            text-align: center;
+        }
+        .stButton button {
+            background-color: #FF4B4B;
+            color: white !important;
+            border-radius: 8px;
+            font-weight: bold;
+            padding: 0.6rem 1rem;
+            border: none;
+        }
+        .stButton button:hover {
+            background-color: #FF6B6B;
+            color: white !important;
+        }
+        /* Make the dataframe readable */
+        [data-testid="stTable"] td, [data-testid="stTable"] th {
+            color: #1E1E1E !important;
         }
         </style>
     """, unsafe_allow_html=True)
