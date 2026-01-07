@@ -114,5 +114,77 @@ def main():
             df = pd.DataFrame(splits)
             st.dataframe(df, use_container_width=True, hide_index=True)
 
+    # --- STOPWATCH SECTION ---
+    st.divider()
+    st.subheader("⏱️ Track Stopwatch")
+
+    import time
+
+    # Initialize session state for stopwatch
+    if "sw_running" not in st.session_state:
+        st.session_state.sw_running = False
+    if "sw_start_time" not in st.session_state:
+        st.session_state.sw_start_time = 0
+    if "sw_elapsed" not in st.session_state:
+        st.session_state.sw_elapsed = 0
+    if "sw_splits" not in st.session_state:
+        st.session_state.sw_splits = []
+
+    def get_current_time():
+        if st.session_state.sw_running:
+            return st.session_state.sw_elapsed + (time.time() - st.session_state.sw_start_time)
+        return st.session_state.sw_elapsed
+
+    current_sw_time = get_current_time()
+    
+    # Big stopwatch display
+    st.markdown(f"<h1 style='text-align: center; font-size: 80px; margin-bottom: 0; color: #1E1E1E;'>{format_time(current_sw_time)}</h1>", unsafe_allow_html=True)
+
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        if st.button("▶️ Start", use_container_width=True, disabled=st.session_state.sw_running):
+            st.session_state.sw_running = True
+            st.session_state.sw_start_time = time.time()
+            st.rerun()
+
+    with col2:
+        if st.button("🚩 Split", use_container_width=True, disabled=not st.session_state.sw_running):
+            split_time = get_current_time()
+            st.session_state.sw_splits.insert(0, split_time)
+            st.rerun()
+
+    with col3:
+        if st.button("⏹️ Stop", use_container_width=True, disabled=not st.session_state.sw_running):
+            st.session_state.sw_running = False
+            st.session_state.sw_elapsed += (time.time() - st.session_state.sw_start_time)
+            st.rerun()
+
+    with col4:
+        # Reset is enabled when stopped and there is elapsed time or splits
+        reset_disabled = st.session_state.sw_running or (st.session_state.sw_elapsed == 0 and not st.session_state.sw_splits)
+        if st.button("🔄 Reset", use_container_width=True, disabled=reset_disabled):
+            st.session_state.sw_running = False
+            st.session_state.sw_start_time = 0
+            st.session_state.sw_elapsed = 0
+            st.session_state.sw_splits = []
+            st.rerun()
+
+    # Display Splits Table
+    if st.session_state.sw_splits:
+        st.write("**Splits**")
+        split_data = []
+        for i, s_time in enumerate(st.session_state.sw_splits):
+            split_data.append({
+                "Split": f"#{len(st.session_state.sw_splits) - i}",
+                "Time": format_time(s_time)
+            })
+        st.table(pd.DataFrame(split_data))
+
+    # Ticking mechanism
+    if st.session_state.sw_running:
+        time.sleep(0.1)
+        st.rerun()
+
 if __name__ == "__main__":
     main()
