@@ -59,7 +59,7 @@ def main():
         with col1:
             pr_min = st.number_input("Minutes", min_value=0, value=0, step=1)
         with col2:
-            pr_sec = st.number_input("Seconds", min_value=0.0, max_value=59.99, value=50.0, step=0.1)
+            pr_sec = st.number_input("Seconds", min_value=0.0, max_value=59.99, value=00.0, step=0.1)
 
         track_dist = st.number_input("Distance per Lap (m)", min_value=1, value=200, step=1)
         
